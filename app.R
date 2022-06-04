@@ -13,16 +13,21 @@ ui <- navbarPage(
            h3(),
            p("This website hopes to show a precursory analysis of the relationships between police brutality, demographics, and police residence.")
   ),
-  tabPanel("Maps", 
-          sidebarLayout(
-            sidebarPanel(),
-            mainPanel(
-              leafletOutput("residence_map")
-            ))
+  tabPanel("Police Residency", 
+           tabsetPanel(
+             tabPanel("Graph 1", 
+                      sidebarLayout(sidebarPanel(),
+                                    mainPanel(leafletOutput("residence_map"))
+                      )
+             ),
+             tabPanel("",
+                      h2("hi")
+             )
+           )
   ),
   tabPanel("Scatterplots",
-          sidebarLayout(sidebarPanel(),
-                        mainPanel())
+           sidebarLayout(sidebarPanel(),
+                         mainPanel())
   ),
   tabPanel("Likelihood of death",
            sidebarLayout(sidebarPanel(),
@@ -37,16 +42,19 @@ ui <- navbarPage(
     gradient = "linear",
     direction = "bottom")
 )
-                                         
+
 server <- function(input, output){
   output$residence_map <- renderLeaflet({ 
     leaflet(data=joined_cities) %>% 
       addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
       addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
-      addCircles(lng=joined_cities$lon, lat=joined_cities$lat#, radius = ~10^mag/10, weight = 1, color = "#777777"
-                 #, fillColor = ~pal(mag), fillOpacity = 0.7, popup = ~paste(mag)
-                 )
+      addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities$all, weight = 1, color = "#777777", 
+                 #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
+                 fillOpacity = 0.7, popup = ~paste(joined_cities$all)
+      )
   })
+  
+  
   
   output$plot2 <- renderPlot({
     
