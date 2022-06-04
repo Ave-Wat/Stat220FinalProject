@@ -41,15 +41,9 @@ server <- function(input, output){
   output$residence_map <- renderLeaflet({
     leaflet(joined_cities) %>%
       addTiles() %>%
-      fitBounds(~min(long), ~min(lat), ~max(long), ~max(lat))
-      
-  })
-  
-  observe({
-    leafletProxy("residence_map", data = joined_cities) %>%
-      clearShapes() %>%
-      addCircles(radius = ~10^mag/10, weight = 1, color = "#777777",
-                 fillColor = ~pal(mag), fillOpacity = 0.7, popup = ~paste(mag)
+      fitBounds(~min(lon), ~min(lat), ~max(lon), ~max(lat)) %>%
+      addCircles(radius = ~10, weight = 1, color = "#777777",
+                 fillColor = "#2172BF", fillOpacity = 0.7, popup = 1
       )
   })
   
