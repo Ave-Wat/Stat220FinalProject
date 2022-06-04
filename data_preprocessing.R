@@ -21,12 +21,20 @@ cities <- cities %>%
   filter(!dups)
 
 demographics <- demographics %>%
-  mutate(city = str_to_lower(City), state_code = `State Code`) %>%
-  select(-c('City', 'State Code', 'State'))
+  rename_with(str_to_lower) %>%
+  rename_with(.cols = everything(), .fn = str_replace, ' ', '_') %>%
+  mutate(across(.cols = c('city', 'race'), .fns = str_to_lower)) 
 
 #join location and demographic data to police residence data for all cities in residence
 joined_cities <- residence %>%
   left_join(cities, by = c('city', 'state_code')) %>%
-  left_join(demographics, by = c('city', 'state_code'))
+  left_join(demographics, by = c('city', 'state_code')) %>%
+  mutate(race_prop = count / total_population, 
+         police_force_prop = police_force_size / total_population) %>%
+  pivot_wider(names_from = race, values_from = c('count', 'race_prop')) %>%
+  select(-c('count_NA', 'race_prop_NA'))
+  
+  
+
 
 
