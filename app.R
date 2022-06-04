@@ -4,23 +4,30 @@ library(shinyWidgets)
 library(RColorBrewer)
 library(lubridate)
 
-ui <- fluidPage(
+ui <- navbarPage(
+  "Police Accountability",
+  tabPanel("About", 
+          sidebarLayout(sidebarPanel(),
+                        mainPanel())
+  ),
+  tabPanel("Maps", 
+          sidebarLayout(sidebarPanel(),
+                        mainPanel())
+  ),
+  tabPanel("Scatterplots",
+          sidebarLayout(sidebarPanel(),
+                        mainPanel())
+  ),
+  tabPanel("Likelihood of death",
+           sidebarLayout(sidebarPanel(),
+                         mainPanel())
+  ),
   #make the background interesting
   setBackgroundColor(
     color = c("#F7FBFF", "#2171B5"),
     gradient = "linear",
-    direction = "bottom"),
-  #create title and main panel for entire website page
-  titlePanel("Police Accountability"),
-  mainPanel(
-    #within website page create tabs for the two different plots, each of which will have a sidebar and main layout
-    tabsetPanel(id="main", 
-                tabPanel("Figure 1: ", 
-                         sidebarLayout(sidebarPanel(),
-                                       mainPanel())),
-                tabPanel("Figure 2: ",
-                         sidebarLayout(sidebarPanel(),
-                                       mainPanel())))))
+    direction = "bottom")
+)
                                          
 server <- function(input, output){
   output$plot1 <- renderPlot({
