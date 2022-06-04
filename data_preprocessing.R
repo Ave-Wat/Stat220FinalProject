@@ -12,13 +12,21 @@ residence <- residence %>%
   mutate(city = str_to_lower(str_extract(residence$city, '[^,]+(?=(,|$))')))
 
 cities <- cities %>%
-  mutate(city = str_to_lower(CITY), lat = LATITUDE, lon = LONGITUDE) %>%
-  select(c('city', 'lat', 'lon'))
+  mutate(city = str_to_lower(CITY), lat = LATITUDE, lon = LONGITUDE, state_code = STATE_CODE) %>%
+  select(c('city', 'lat', 'lon', state_code))
+
+dups <- duplicated(cities %>% select(c('city', 'state_code')))
+
+cities <- cities %>%
+  filter(!dups)
 
 demographics <- demographics %>%
-  mutate(city = str_to_lower(City)) %>%
-  select(-c('City'))
+  mutate(city = str_to_lower(City), state_code = `State Code`) %>%
+  select(-c('City', 'State Code', 'State'))
 
+#join location and demographic data to police residence data for all cities in residence
 joined_cities <- residence %>%
-  left_join(cities) %>%
-  left_join(demographics)
+  left_join(cities, by = c('city', 'state_code')) %>%
+  left_join(demographics, by = c('city', 'state_code'))
+
+
