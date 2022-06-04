@@ -7,7 +7,7 @@ demographics <- read_delim('data/us-cities-demographics.csv', delim = ';')
 killings <- read_csv('data/police_killings.csv')
 hate_crimes <- read_csv('data/hate_crimes.csv')
 
-#standardize city variables accross geographical data sets for joining
+#standardize variables across geographical data sets for joining
 residence <- residence %>%
   mutate(city = str_to_lower(str_extract(residence$city, '[^,]+(?=(,|$))')))
 
@@ -25,11 +25,19 @@ demographics <- demographics %>%
   rename_with(.cols = everything(), .fn = str_replace, ' ', '_') %>%
   mutate(across(.cols = c('city', 'race'), .fns = str_to_lower)) 
 
+#extract number of police killings in each city 
+killings_by_city <- killings %>%
+  mutate(city = str_to_lower(city)) %>%
+  group_by(city, state) %>%
+  summarize(killings = n())
+
 #join location and demographic data to police residence data for all cities in residence
 joined_cities <- residence %>%
   left_join(cities, by = c('city', 'state_code')) %>%
   left_join(demographics, by = c('city', 'state_code')) %>%
-  mutate(race_prop = count / total_population, 
+  left_join(killings_by_city, by = c('city', 'state_code' = 'state')) %>%
+  mutate(killings = coalesce(killings, 0),
+         race_prop = count / total_population, 
          police_force_prop = police_force_size / total_population) %>%
   pivot_wider(names_from = race, values_from = c('count', 'race_prop')) %>%
   select(-c('count_NA', 'race_prop_NA'))
