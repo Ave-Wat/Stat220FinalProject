@@ -4,6 +4,7 @@ library(shinyWidgets)
 library(RColorBrewer)
 library(lubridate)
 library(leaflet)
+library(maps)
 
 ui <- navbarPage(
   "Police Accountability",
@@ -16,7 +17,7 @@ ui <- navbarPage(
           sidebarLayout(
             sidebarPanel(),
             mainPanel(
-              leafletOutput("residence_map", width = "100%", height = "100%")
+              leafletOutput("residence_map")
             ))
   ),
   tabPanel("Scatterplots",
@@ -38,13 +39,13 @@ ui <- navbarPage(
 )
                                          
 server <- function(input, output){
-  output$residence_map <- renderLeaflet({
-    leaflet(joined_cities) %>%
-      addTiles() %>%
-      fitBounds(~min(lon), ~min(lat), ~max(lon), ~max(lat)) %>%
-      addCircles(radius = ~10, weight = 1, color = "#777777",
-                 fillColor = "#2172BF", fillOpacity = 0.7, popup = 1
-      )
+  output$residence_map <- renderLeaflet({ 
+    leaflet(data=joined_cities) %>% 
+      addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
+      addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
+      addCircles(lng=joined_cities$lon, lat=joined_cities$lat#, radius = ~10^mag/10, weight = 1, color = "#777777"
+                 #, fillColor = ~pal(mag), fillOpacity = 0.7, popup = ~paste(mag)
+                 )
   })
   
   output$plot2 <- renderPlot({
