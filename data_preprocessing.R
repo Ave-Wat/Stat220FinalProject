@@ -34,7 +34,7 @@ joined_cities <- residence %>%
   pivot_wider(names_from = race, values_from = c('count', 'race_prop')) %>%
   select(-c('count_NA', 'race_prop_NA'))
   
-  
+write_csv(joined_cities, 'data/joined_cities.csv')
 
 
 
