@@ -15,9 +15,16 @@ ui <- navbarPage(
   ),
   tabPanel("Police Residency", 
            tabsetPanel(
-             tabPanel("Graph 1", 
-                      sidebarLayout(sidebarPanel(),
-                                    mainPanel(leafletOutput("residence_map"))
+             tabPanel("Percentage of Police Living in their Communities", 
+                      sidebarLayout(
+                        sidebarPanel(
+                          radioButtons(
+                            "race",
+                            "Percentage of Police Living in their Communities by Race",
+                            c("All Races" = "all", "White" = "white", "Non-White" = "non-white", "Black" = "black", "Hispanic" = "hispanic")
+                            ),
+                        ),
+                        mainPanel(leafletOutput("residence_map"))
                       )
              ),
              tabPanel("",
@@ -45,12 +52,13 @@ ui <- navbarPage(
 
 server <- function(input, output){
   output$residence_map <- renderLeaflet({ 
-    leaflet(data=joined_cities) %>% 
+    print(unlist(input$race))
+    leaflet(data=joined_cities) %>%
       addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
       addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
-      addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities$all, weight = 1, color = "#777777", 
+      addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities[,unlist(input$race)], weight = 1, color = "#777777", 
                  #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
-                 fillOpacity = 0.7, popup = ~paste(joined_cities$all)
+                 fillOpacity = 0.7, popup = ~paste(joined_cities[,unlist(input$race)])
       )
   })
   
