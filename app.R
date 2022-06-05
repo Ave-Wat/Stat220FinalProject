@@ -53,14 +53,23 @@ ui <- navbarPage(
 )
 
 server <- function(input, output){
+  filteredData <- reactive({
+    select(joined_cities, input$race)
+  })
+  
   output$residence_map <- renderLeaflet({ 
-    print(unlist(input$race))
+    residency <- select(joined_cities, input$race)
     leaflet(data=joined_cities) %>%
       addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
-      addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
-      addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities[,unlist(input$race)], weight = 1, color = "#777777", 
+      addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE)
+      
+  })
+  
+  observe({
+    leafletProxy("residence_map", data = filteredData()) %>%
+      addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*filteredData(), weight = 1, color = "#777777", 
                  #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
-                 fillOpacity = 0.7, popup = ~paste(joined_cities[,unlist(input$race)])
+                 fillOpacity = 0.7, popup = ~paste(filteredData())
       )
   })
   
