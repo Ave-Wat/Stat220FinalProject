@@ -6,6 +6,8 @@ library(lubridate)
 library(leaflet)
 library(maps)
 
+joined_cities <- read_csv('data/joined_cities.csv')
+
 ui <- navbarPage(
   "Police Accountability",
   tabPanel("About", 
@@ -36,9 +38,9 @@ ui <- navbarPage(
            sidebarLayout(sidebarPanel(),
                          mainPanel())
   ),
-  tabPanel("Likelihood of death",
-           sidebarLayout(sidebarPanel(),
-                         mainPanel())
+  tabPanel("Will Your City Have a Police Killing?",
+           fluidRow(column(width = 12, numericInput(inputId = 'pop', label = 'City Pop.', value = 5000))),
+           fluidRow(column(width = 12))
   ),
   tabPanel("Citations",
            p("This website hopes to show a precursory analysis of the relationships between police brutality, demographics, and police residence.")
