@@ -62,8 +62,8 @@ rf_data <- joined_cities %>%
 
 train_control <- trainControl(method = "cv", number = 10)
 
-killings_rf <- randomForest(had_killing ~ . , data = rf_data, mtry = 10)
-varImpPlot(killings_rf, n.var = 15)
+killings_rf <- randomForest(had_killing ~ . , data = rf_data, mtry = 20)
+varImpPlot(killings_rf, n.var = 20) #it looks like police force size, average household size, and the proportion of all police that live in the city are important
 
 
 
