@@ -92,7 +92,9 @@ ui <- navbarPage(
                               "Hate Crimes" = "hatecrimes",
                               "Share of Nonwhite State Residents" = "nonwhite_pop"))
              ),
-             mainPanel(leafletOutput("map_police_killings")))
+             mainPanel(leafletOutput("map_police_killings"),
+                       div("This map shows both police killings in major cities and a demographic variable of each state.
+                           ", style=div_style)))
       ),
       tabPanel("Police Killings by Communities' Proportion of Race",
         sidebarLayout(
@@ -107,7 +109,9 @@ ui <- navbarPage(
                 "Asian" = "race_prop_asian")
             )
           ),
-          mainPanel(plotOutput(outputId = "killings_scatterplot"))
+          mainPanel(plotOutput(outputId = "killings_scatterplot"),
+                    div("This graph displays the number of people killed by police vs. a city's proportion of that race.",
+                        style=div_style))
         )
       )
     )
