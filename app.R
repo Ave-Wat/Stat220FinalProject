@@ -138,13 +138,16 @@ ui <- navbarPage(
                            plotOutput(outputId = 'var_imp_plot'))))
   ),
   tabPanel("Citations",
-           div("For data on police residency:", 
-               a(href='https://github.com/fivethirtyeight/data/tree/master/police-locals',"538 Github"),
-               style=div_style),
-           div("For data on police killings:", 
-               a(href='https://github.com/fivethirtyeight/data/tree/master/police-killings',"538 Github"),
-               style=div_style),
-           div("etc", style=div_style)
+           div(
+             p("For data on police residency:", 
+               a(href='https://github.com/fivethirtyeight/data/tree/master/police-locals',"538 Github")),
+             p("For data on police killings:", 
+                 a(href='https://github.com/fivethirtyeight/data/tree/master/police-killings',"538 Github")),
+             p("For data on demographics: ",
+                 a(href='https://public.opendatasoft.com/explore/dataset/us-cities-demographics/table/', "OpenDataSoft")),
+             p("For data on hate crimes: ",
+                 a(href="https://github.com/fivethirtyeight/data/tree/master/hate-crimes", "538 Github")),
+             style=div_style)
   ),
   #make the background interesting
   setBackgroundColor(
