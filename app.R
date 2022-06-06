@@ -39,8 +39,10 @@ ui <- navbarPage(
   tabPanel("About", 
            HTML('<center><img src="download.png" width="400"></center>'),
            h3(),
-           div("This website hopes to show a precursory analysis of the relationships between police brutality, demographics, and police residence. 
-               This site contains graphs and maps to help make sense of data about police residency, police killings, and the demographics of our communities.",
+           div("On this site, we provide visualizations of the relationships between
+               city and state demographics and police violence, allowing users to investigate
+               which factors are correlated with police killings and to predict whether a 
+               city with a given set of demographic statistics will have had a police killing.",
                style=div_style)
   ),
   tabPanel("Police Residency", 
@@ -52,11 +54,11 @@ ui <- navbarPage(
                             "race",
                             "Percentage of Police Living in their Communities by Race",
                             c("All Races" = "all", "White" = "white", "Non-White" = "non_white", "Black" = "black", "Hispanic" = "hispanic")
-                            )
+                          )
                         ),
                         mainPanel(leafletOutput("residence_map"), 
-                                  div("This graph shows the percentage of police officers living in the communities they patrol. 
-                                      If an officer is policing their own neighborhood, they are likely to have more personal connections and treat people better.
+                                  div("This graph shows the percentage of police officers that live in the cities that they serve. 
+                                      If an officer is policing their own neighborhood, they are more likely to have more personal connections and treat people better.
                                       A user can also subset the data by race to see what percentages of officers of a specific race live in the communities they patrol.",
                                       style=div_style))
                       )
@@ -72,7 +74,7 @@ ui <- navbarPage(
                         ),
                         mainPanel(plotOutput(outputId = "residency_scatterplot"),
                                   div("This graph shows the relationship between the percentage of police living in the communites they patrol and the number of people police have killed in an average year.
-                                      We concluded there was no relationship between the two variables. 
+                                      There does not seem to be a strong correlation between the two variables. 
                                       However, it would be interesting to look into whether this effects other types of police misconduct.",
                                       style=div_style))
                       )
@@ -80,41 +82,42 @@ ui <- navbarPage(
            )
   ),
   tabPanel("Demographics and Police Brutality",
-    tabsetPanel(
-      tabPanel("Mapping Police Killings",
-           sidebarLayout(
-             sidebarPanel(
-               radioButtons("demographic_info",
-                            "Demographic Information",
-                            c("Median Household Income" = "income",
-                              "Hate Crimes" = "hatecrimes",
-                              "Share of Nonwhite State Residents" = "nonwhite_pop"))
-             ),
-             mainPanel(leafletOutput("map_police_killings"),
-                       div("This map shows both police killings in major cities and a demographic variable of each state.
+           tabsetPanel(
+             tabPanel("Mapping Police Killings",
+                      sidebarLayout(
+                        sidebarPanel(
+                          radioButtons("demographic_info",
+                                       "Demographic Information",
+                                       c("Median Household Income" = "income",
+                                         "Hate Crimes" = "hatecrimes",
+                                         "Share of Nonwhite State Residents" = "nonwhite_pop"))
+                        ),
+                        mainPanel(leafletOutput("map_police_killings"),
+                                  div("This map shows both police killings in major cities and a demographic variable of each state.
                            ", style=div_style)))
-      ),
-      tabPanel("Police Killings by Communities' Proportion of Race",
-        sidebarLayout(
-          sidebarPanel(
-            radioButtons(
-              "race3",
-              "Proportion of Race in a Given City",
-              c("Native American" = "race_prop_american_indian_and_alaska_native", 
-                "White" = "race_prop_white", 
-                "Black or African American" = "race_prop_black_or_african_american", 
-                "Hispanic" = "race_prop_hispanic_or_latino", 
-                "Asian" = "race_prop_asian")
-            )
-          ),
-          mainPanel(plotOutput(outputId = "killings_scatterplot"),
-                    div("This graph displays the number of people killed by police vs. a city's proportion of that race.",
-                        style=div_style))
-        )
-      )
-    )
+             ),
+             tabPanel("Police Killings by Communities' Proportion of Race",
+                      sidebarLayout(
+                        sidebarPanel(
+                          radioButtons(
+                            "race3",
+                            "Proportion of Race in a Given City",
+                            c("Native American" = "race_prop_american_indian_and_alaska_native", 
+                              "White" = "race_prop_white", 
+                              "Black or African American" = "race_prop_black_or_african_american", 
+                              "Hispanic" = "race_prop_hispanic_or_latino", 
+                              "Asian" = "race_prop_asian")
+                          )
+                        ),
+                        mainPanel(plotOutput(outputId = "killings_scatterplot"),
+                                  div("This graph displays the relationship between the number of people killed by police in a city 
+                        and the proportion of that city's population of the selected race.",
+                                      style=div_style))
+                      )
+             )
+           )
   ),
-  tabPanel("Will Your City Have a Police Killing?",
+  tabPanel("Has Your City Had a Police Killing?",
            sidebarLayout(sidebarPanel(div(strong("Enter the police force size, the proportion of police that live
                                                  within the city, and the population for a city, and we will predict whether 
                                                  that city has had a police killing using a random forest model."), style = div_style),
@@ -125,17 +128,18 @@ ui <- navbarPage(
                                       numericInput(inputId = 'pop', label = 'Population: ',
                                                    min = 1, max = max(rf_data$total_population), value = round(mean(rf_data$total_population))),
                                       actionButton(inputId = 'fit', label = 'Predict!')
-                         ),
-                         mainPanel(verticalLayout(
-                           div(strong('Our prediction based on the selected city stats: '), style = div_style),
-                           div(strong(textOutput(outputId = 'class')), style = div_style),
-                           div(strong("Below is a breakdown of which city characteristics (from the entire dataset, not just the 3 used above) our model deemed
+           ),
+           mainPanel(verticalLayout(
+             div(strong('Our prediction based on the selected city stats: '), style = div_style),
+             div(strong(textOutput(outputId = 'class')), style = div_style),
+             div(strong("Below is a breakdown of which city characteristics (from the entire dataset, not just the 3 used above) our model deemed
                                       most important for determining whether or not a city had a police killing.
                                       Note that many of these characteristics are difficult to explain or 
                                       likely confounded with other characteristics: for example, longitude is
-                                      probably highly correlated with population. "), 
-                               style = div_style),
-                           plotOutput(outputId = 'var_imp_plot'))))
+                                      probably highly correlated with population, and so we should take its
+                                      seemingly high importance with a grain of salt."), 
+                 style = div_style),
+             plotOutput(outputId = 'var_imp_plot'))))
   ),
   tabPanel("Citations",
            div(
@@ -161,7 +165,7 @@ server <- function(input, output){
     select(joined_cities, input$race)
   })
   
-
+  
   output$residence_map <- renderLeaflet({ 
     residency <- NULL
     if(input$race == "all"){
@@ -245,21 +249,21 @@ server <- function(input, output){
                        point.padding = 0.5,
                        segment.color = 'grey50') +
       geom_smooth(method='lm')
-      
+    
   })
   
   output$var_imp_plot <- renderPlot({varImpPlot(killings_rf_all, n.var = 15, main = 'City Stats Most Influential to Classification')})
   
   output$class <- renderText({prediction()})
-    
+  
   prediction <- eventReactive(input$fit,
-                  {city <- as_tibble(data.frame(all = input$all, 
-                                                police_force_size = input$force, 
-                                                total_population = input$pop))
-                  p <- predict(killings_rf_3, newdata = city)
-                  ifelse(p == 'yes', 'We predict that your city HAS had a police killing.', 'We predict that your city has NOT had a police killing.')
-                  
-  })
+                              {city <- as_tibble(data.frame(all = input$all, 
+                                                            police_force_size = input$force, 
+                                                            total_population = input$pop))
+                              p <- predict(killings_rf_3, newdata = city)
+                              ifelse(p == 'yes', 'We predict that your city HAS had a police killing.', 'We predict that your city has NOT had a police killing.')
+                              
+                              })
   
 }
 shinyApp(ui = ui, server = server )
