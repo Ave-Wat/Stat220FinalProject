@@ -43,7 +43,10 @@ ui <- navbarPage(
                city and state demographics and police violence, allowing users to investigate
                which factors are correlated with police killings and to predict whether a 
                city with a given set of demographic statistics will have had a police killing.",
-               style=div_style)
+               style=div_style),
+           div(strong("Data Chronology: "), br(), "The police killings and city demographics
+               data are from 2015, while the hate crimes data was collected over the period from 2009 to 2016.",
+               style = div_style)
   ),
   tabPanel("Police Residency", 
            tabsetPanel(
