@@ -8,11 +8,13 @@ library(maps)
 library(randomForest)
 library(ggplot2)
 library(ggrepel)
+library(caret)
 
 #load data
 joined_cities <- read_csv('data/joined_cities.csv')
 
 #fit preliminary rf model with all variables
+set.seed(220)
 rf_data <- joined_cities %>%
   mutate(had_killing = as.factor(ifelse(killings > 0, 'yes', 'no')),
          had_killing = fct_relevel(had_killing, 'yes')) %>%
@@ -234,14 +236,16 @@ server <- function(input, output){
   
   output$var_imp_plot <- renderPlot({varImpPlot(killings_rf_all, n.var = 15, main = 'City Stats Most Influential to Classification')})
   
-  output$class <- eventReactive(input$fit,
+  output$class <- renderText({prediction()})
+    
+  prediction <- eventReactive(input$fit,
                   {city <- as_tibble(data.frame(all = input$all, 
                                                 police_force_size = input$force, 
                                                 total_population = input$pop))
-                  prediction <- predict(killings_rf_3, new_data = city)
-                  renderText({
-                    ifelse(prediction == 'yes', 'We predict that your city HAS had a police killing.', 'We predict that your city has NOT had a police killing.')
-                  })
+                  print(city)
+                  p <- predict(killings_rf_3, new_data = city)
+                  ifelse(p == 'yes', 'We predict that your city HAS had a police killing.', 'We predict that your city has NOT had a police killing.')
+                  
   })
   
 }
