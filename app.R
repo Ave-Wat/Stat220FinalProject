@@ -20,7 +20,6 @@ rf_data <- joined_cities %>%
   drop_na()
 
 killings_rf_all <- randomForest(had_killing ~ . , data = rf_data, mtry = 14)
-varImpPlot(killings_rf_all, n.var = 15, main = 'City Stats Most Influential to Classification')
 
 #set ui constants
 div_style <- "color:black; background-color:white; 
@@ -69,11 +68,19 @@ ui <- navbarPage(
                          mainPanel())
   ),
   tabPanel("Will Your City Have a Police Killing?",
-           sidebarLayout(sidebarPanel(),
+           sidebarLayout(sidebarPanel(div(strong("Enter the police force size, the proportion of police that live
+                                                 within the city, and the population for a city, and we will predict whether 
+                                                 that city has had a police killing using a random forest model."), style = div_style),
+                                      numericInput(inputId = 'force', label = 'Police Force Size: ',
+                                                   min = 1, max = max(rf_data$police_force_size), value = mean(rf_data$police_force_size)),
+                                      numericInput(inputId = 'residence', label = 'Proportion of Police Living in City: ',
+                                                   min = 0, max = 1, value = mean(rf_data$all)),
+                                      numericInput(inputId = 'pop', label = 'Population: ',
+                                                   min = 1, max = max(rf_data$total_population), value = mean(rf_data$total_population))),
                          mainPanel(verticalLayout(
                            div(strong('Our prediction based on the selected city stats: '), style = div_style),
                            div(strong(textOutput(outputId = 'class')), style = div_style),
-                           div(strong("Below is a breakdown of which city characteristics our model deemed
+                           div(strong("Below is a breakdown of which city characteristics (from the entire dataset, not just the 3 used above) our model deemed
                                       most important for determining whether or not a city had a police killing.
                                       Note that many of these characteristics are difficult to explain or 
                                       likely confounded with other characteristics: for example, longitude is
