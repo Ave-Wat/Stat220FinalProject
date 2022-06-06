@@ -1,3 +1,7 @@
+# final-project
+# Ben Aoki-Sherwood and Avery Watts
+# June 2022, Intro to Data Science
+
 library(tidyverse)
 
 #load datasets

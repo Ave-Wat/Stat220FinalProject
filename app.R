@@ -1,3 +1,7 @@
+# final-project
+# Ben Aoki-Sherwood and Avery Watts
+# June 2022, Intro to Data Science
+
 library(shiny)
 library(tidyverse)
 library(shinyWidgets)
@@ -43,8 +47,7 @@ ui <- navbarPage(
                city and state demographics and police violence, allowing users to investigate
                which factors are correlated with police killings and to predict whether a 
                city with a given set of demographic statistics will have had a police killing.",
-               style=div_style)
-  ),
+               style=div_style)),
   tabPanel("Police Residency", 
            tabsetPanel(
              tabPanel("Percentage of Police Living in their Communities", 
@@ -53,34 +56,24 @@ ui <- navbarPage(
                           radioButtons(
                             "race",
                             "Percentage of Police Living in their Communities by Race",
-                            c("All Races" = "all", "White" = "white", "Non-White" = "non_white", "Black" = "black", "Hispanic" = "hispanic")
-                          )
-                        ),
+                            c("All Races" = "all", "White" = "white", "Non-White" = "non_white", "Black" = "black", "Hispanic" = "hispanic"))),
                         mainPanel(leafletOutput("residence_map"), 
                                   div("This graph shows the percentage of police officers that live in the cities that they serve. 
                                       If an officer is policing their own neighborhood, they are more likely to have more personal connections and treat people better.
                                       A user can also subset the data by race to see what percentages of officers of a specific race live in the communities they patrol.",
-                                      style=div_style))
-                      )
-             ),
+                                      style=div_style)))),
              tabPanel("Residency and Police Killings",
                       sidebarLayout(
                         sidebarPanel(
                           radioButtons(
                             "race2",
                             "Percentage of Police Living in their Communities by Race",
-                            c("All Races" = "all", "White" = "white", "Non-White" = "non_white", "Black" = "black", "Hispanic" = "hispanic")
-                          )
-                        ),
+                            c("All Races" = "all", "White" = "white", "Non-White" = "non_white", "Black" = "black", "Hispanic" = "hispanic"))),
                         mainPanel(plotOutput(outputId = "residency_scatterplot"),
                                   div("This graph shows the relationship between the percentage of police living in the communites they patrol and the number of people police have killed in an average year.
                                       There does not seem to be a strong correlation between the two variables. 
                                       However, it would be interesting to look into whether this effects other types of police misconduct.",
-                                      style=div_style))
-                      )
-             )
-           )
-  ),
+                                      style=div_style)))))),
   tabPanel("Demographics and Police Brutality",
            tabsetPanel(
              tabPanel("Mapping Police Killings",
@@ -90,12 +83,10 @@ ui <- navbarPage(
                                        "Demographic Information",
                                        c("Median Household Income" = "income",
                                          "Hate Crimes" = "hatecrimes",
-                                         "Share of Nonwhite State Residents" = "nonwhite_pop"))
-                        ),
+                                         "Share of Nonwhite State Residents" = "nonwhite_pop"))),
                         mainPanel(leafletOutput("map_police_killings"),
                                   div("This map shows both police killings in major cities and a demographic variable of each state.
-                           ", style=div_style)))
-             ),
+                           ", style=div_style)))),
              tabPanel("Police Killings by Communities' Proportion of Race",
                       sidebarLayout(
                         sidebarPanel(
@@ -106,17 +97,11 @@ ui <- navbarPage(
                               "White" = "race_prop_white", 
                               "Black or African American" = "race_prop_black_or_african_american", 
                               "Hispanic" = "race_prop_hispanic_or_latino", 
-                              "Asian" = "race_prop_asian")
-                          )
-                        ),
+                              "Asian" = "race_prop_asian"))),
                         mainPanel(plotOutput(outputId = "killings_scatterplot"),
                                   div("This graph displays the relationship between the number of people killed by police in a city 
                         and the proportion of that city's population of the selected race.",
-                                      style=div_style))
-                      )
-             )
-           )
-  ),
+                                      style=div_style)))))),
   tabPanel("Has Your City Had a Police Killing?",
            sidebarLayout(sidebarPanel(div(strong("Enter the police force size, the proportion of police that live
                                                  within the city, and the population for a city, and we will predict whether 
@@ -127,8 +112,7 @@ ui <- navbarPage(
                                                    min = 0, max = 1, value = round(mean(rf_data$all), 2)),
                                       numericInput(inputId = 'pop', label = 'Population: ',
                                                    min = 1, max = max(rf_data$total_population), value = round(mean(rf_data$total_population))),
-                                      actionButton(inputId = 'fit', label = 'Predict!')
-           ),
+                                      actionButton(inputId = 'fit', label = 'Predict!')),
            mainPanel(verticalLayout(
              div(strong('Our prediction based on the selected city stats: '), style = div_style),
              div(strong(textOutput(outputId = 'class')), style = div_style),
@@ -139,8 +123,7 @@ ui <- navbarPage(
                                       probably highly correlated with population, and so we should take its
                                       seemingly high importance with a grain of salt."), 
                  style = div_style),
-             plotOutput(outputId = 'var_imp_plot'))))
-  ),
+             plotOutput(outputId = 'var_imp_plot'))))),
   tabPanel("Citations",
            div(
              p("For data on police residency:", 
@@ -151,14 +134,12 @@ ui <- navbarPage(
                  a(href='https://public.opendatasoft.com/explore/dataset/us-cities-demographics/table/', "OpenDataSoft")),
              p("For data on hate crimes: ",
                  a(href="https://github.com/fivethirtyeight/data/tree/master/hate-crimes", "538 Github")),
-             style=div_style)
-  ),
+             style=div_style)),
   #make the background interesting
   setBackgroundColor(
     color = c("#F7FBFF", "#687178"),
     gradient = "radial",
-    direction = c("top", "left"))
-)
+    direction = c("top", "left")))
 
 server <- function(input, output){
   filteredData <- reactive({
@@ -187,8 +168,7 @@ server <- function(input, output){
       addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
       addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*residency, weight = 1, color = "#777777", 
                  #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
-                 fillOpacity = 0.7, popup = ~paste(residency)
-      )
+                 fillOpacity = 0.7, popup = ~paste(residency))
   })
   
   output$map_police_killings <- renderLeaflet({ 
