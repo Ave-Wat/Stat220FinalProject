@@ -26,10 +26,6 @@ killings_rf_all <- randomForest(had_killing ~ . , data = rf_data, mtry = 14)
 rf_data3 <- select(rf_data, c('had_killing', 'all', 'police_force_size', 'total_population'))
 killings_rf_3 <- randomForest(had_killing ~ . , data = rf_data3)
 
-city_tibble <- function(all, police_force_size, total_population){
-  as_tibble(data.frame(all = all, police_force_size = police_force_size, total_population = total_population))
-}
-
 #set ui constants
 div_style <- "color:black; background-color:white; 
              margin-bottom:20px; border: 2px solid black; 
@@ -257,8 +253,7 @@ server <- function(input, output){
                   {city <- as_tibble(data.frame(all = input$all, 
                                                 police_force_size = input$force, 
                                                 total_population = input$pop))
-                  print(city)
-                  p <- predict(killings_rf_3, new_data = city)
+                  p <- predict(killings_rf_3, newdata = city)
                   ifelse(p == 'yes', 'We predict that your city HAS had a police killing.', 'We predict that your city has NOT had a police killing.')
                   
   })
