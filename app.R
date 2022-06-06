@@ -6,6 +6,8 @@ library(lubridate)
 library(leaflet)
 library(maps)
 library(randomForest)
+library(ggplot2)
+library(ggrepel)
 
 #load data
 joined_cities <- read_csv('data/joined_cities.csv')
@@ -42,8 +44,8 @@ ui <- navbarPage(
                           radioButtons(
                             "race",
                             "Percentage of Police Living in their Communities by Race",
-                            c("All Races" = "all", "White" = "white", "Non-White" = "non-white", "Black" = "black", "Hispanic" = "hispanic")
-                            ),
+                            c("All Races" = "all", "White" = "white", "Non-White" = "non_white", "Black" = "black", "Hispanic" = "hispanic")
+                            )
                         ),
                         mainPanel(leafletOutput("residence_map"))
                       )
@@ -51,7 +53,11 @@ ui <- navbarPage(
              tabPanel("Residency and Police Killings",
                       sidebarLayout(
                         sidebarPanel(
-                          
+                          radioButtons(
+                            "race2",
+                            "Percentage of Police Living in their Communities by Race",
+                            c("All Races" = "all", "White" = "white", "Non-White" = "non_white", "Black" = "black", "Hispanic" = "hispanic")
+                          )
                         ),
                         mainPanel(plotOutput(outputId = "residency_scatterplot"))
                       )
@@ -91,23 +97,59 @@ server <- function(input, output){
   })
   
   output$residence_map <- renderLeaflet({ 
-    residency <- select(joined_cities, input$race)
-    leaflet(data=joined_cities) %>%
-      addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
-      addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE)
+    if(input$race == "all"){
+      leaflet(data=joined_cities) %>%
+        addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
+        addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
+        addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities$all, weight = 1, color = "#777777", 
+                   #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
+                   fillOpacity = 0.7, popup = ~paste(joined_cities$all)
+        )
+    } else if (input$race == "white"){
+      leaflet(data=joined_cities) %>%
+        addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
+        addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
+        addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities$white, weight = 1, color = "#777777", 
+                   #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
+                   fillOpacity = 0.7, popup = ~paste(joined_cities$white)
+        )
+    } else if (input$race == "non_white"){
+      leaflet(data=joined_cities) %>%
+        addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
+        addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
+        addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities$non_white, weight = 1, color = "#777777", 
+                   #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$non_white),
+                   fillOpacity = 0.7, popup = ~paste(joined_cities$non_white)
+        )
+    } else if (input$race == "black"){
+      leaflet(data=joined_cities) %>%
+        addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
+        addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
+        addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities$black, weight = 1, color = "#777777", 
+                   #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
+                   fillOpacity = 0.7, popup = ~paste(joined_cities$black)
+        )
+    } else if (input$race == "hispanic"){
+      leaflet(data=joined_cities) %>%
+        addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
+        addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
+        addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities$hispanic, weight = 1, color = "#777777", 
+                   #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
+                   fillOpacity = 0.7, popup = ~paste(joined_cities$hispanic)
+        )
+    } else {
       
-  })
-  
-  observe({
-    leafletProxy("residence_map", data = filteredData()) %>%
-      addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*filteredData, weight = 1, color = "#777777", 
-                 #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
-                 fillOpacity = 0.7, popup = ~paste(filteredData)
-      )
+    }
   })
   
   output$residency_scatterplot <- renderPlot({
-    ggplot(data=joined_cities, aes(x=all, y=killings_by_city))
+    ggplot(joined_cities, aes_string(x=input$race2, y="killings", label="city")) +
+      geom_point() +
+      geom_label_repel(box.padding   = 0.35, 
+                       point.padding = 0.5,
+                       segment.color = 'grey50') +
+      geom_smooth(method='lm')
+      
   })
 
   output$class <- renderText({
