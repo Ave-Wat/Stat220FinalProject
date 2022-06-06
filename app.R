@@ -5,8 +5,27 @@ library(RColorBrewer)
 library(lubridate)
 library(leaflet)
 library(maps)
+library(randomForest)
 
+#load data
 joined_cities <- read_csv('data/joined_cities.csv')
+
+#fit preliminary rf model with all variables
+rf_data <- joined_cities %>%
+  mutate(had_killing = as.factor(ifelse(killings > 0, 'yes', 'no')),
+         had_killing = fct_relevel(had_killing, 'yes')) %>%
+  select(-c('city', 'state_code', 'state', 'killings')) %>%
+  drop_na()
+
+killings_rf_all <- randomForest(had_killing ~ . , data = rf_data, mtry = 14)
+varImpPlot(killings_rf_all, n.var = 15, main = 'City Stats Most Influential to Classification')
+
+#set ui constants
+div_style <- "color:black; background-color:white; 
+             margin-bottom:20px; border: 2px solid black; 
+             border-radius: 8px; font-size: medium; 
+             padding-top: 5px; padding-right: 5px; 
+             padding-bottom: 5px; padding-left: 5px;"
 
 ui <- navbarPage(
   "Police Accountability",
@@ -44,17 +63,26 @@ ui <- navbarPage(
                          mainPanel())
   ),
   tabPanel("Will Your City Have a Police Killing?",
-           fluidRow(column(width = 12, numericInput(inputId = 'pop', label = 'City Pop.', value = 5000))),
-           fluidRow(column(width = 12))
+           sidebarLayout(sidebarPanel(),
+                         mainPanel(verticalLayout(
+                           div(strong('Our prediction based on the selected city stats: '), style = div_style),
+                           div(strong(textOutput(outputId = 'class')), style = div_style),
+                           div(strong("Below is a breakdown of which city characteristics our model deemed
+                                      most important for determining whether or not a city had a police killing.
+                                      Note that many of these characteristics are difficult to explain or 
+                                      likely confounded with other characteristics: for example, longitude is
+                                      probably highly correlated with population. "), 
+                               style = div_style),
+                           plotOutput(outputId = 'var_imp_plot'))))
   ),
   tabPanel("Citations",
            p("This website hopes to show a precursory analysis of the relationships between police brutality, demographics, and police residence.")
   ),
   #make the background interesting
   setBackgroundColor(
-    color = c("#F7FBFF", "#2171B5"),
-    gradient = "linear",
-    direction = "bottom")
+    color = c("#F7FBFF", "#687178"),
+    gradient = "radial",
+    direction = c("top", "left"))
 )
 
 server <- function(input, output){
@@ -78,10 +106,14 @@ server <- function(input, output){
       )
   })
   
-  
-  
   output$residency_scatterplot <- renderPlot({
     ggplot(data=joined_cities, aes(x=all, y=killings_by_city))
   })
+
+  output$class <- renderText({
+    ifelse('yes' == 'yes', 'We predict that your city has had a police killing.', 'We predict that your city has not had a police killing.')
+  })
+  
+  output$var_imp_plot <- renderPlot({varImpPlot(killings_rf_all, n.var = 15, main = 'City Stats Most Influential to Classification')})
 }
 shinyApp(ui = ui, server = server )
