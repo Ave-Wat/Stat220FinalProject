@@ -35,14 +35,17 @@ div_style <- "color:black; background-color:white;
              margin-bottom:20px; border: 2px solid black; 
              border-radius: 8px; font-size: medium; 
              padding-top: 5px; padding-right: 5px; 
-             padding-bottom: 5px; padding-left: 5px;"
+             padding-bottom: 5px; padding-left: 5px;
+             margin-top:20px;"
 
 ui <- navbarPage(
   "Police Accountability",
   tabPanel("About", 
            HTML('<center><img src="download.png" width="400"></center>'),
            h3(),
-           div("This website hopes to show a precursory analysis of the relationships between police brutality, demographics, and police residence.", style=div_style)
+           div("This website hopes to show a precursory analysis of the relationships between police brutality, demographics, and police residence. 
+               This site contains graphs and maps to help make sense of data about police residency, police killings, and the demographics of our communities.",
+               style=div_style)
   ),
   tabPanel("Police Residency", 
            tabsetPanel(
@@ -55,7 +58,11 @@ ui <- navbarPage(
                             c("All Races" = "all", "White" = "white", "Non-White" = "non_white", "Black" = "black", "Hispanic" = "hispanic")
                             )
                         ),
-                        mainPanel(leafletOutput("residence_map"))
+                        mainPanel(leafletOutput("residence_map"), 
+                                  div("This graph shows the percentage of police officers living in the communities they patrol. 
+                                      If an officer is policing their own neighborhood, they are likely to have more personal connections and treat people better.
+                                      A user can also subset the data by race to see what percentages of officers of a specific race live in the communities they patrol.",
+                                      style=div_style))
                       )
              ),
              tabPanel("Residency and Police Killings",
@@ -67,7 +74,11 @@ ui <- navbarPage(
                             c("All Races" = "all", "White" = "white", "Non-White" = "non_white", "Black" = "black", "Hispanic" = "hispanic")
                           )
                         ),
-                        mainPanel(plotOutput(outputId = "residency_scatterplot"))
+                        mainPanel(plotOutput(outputId = "residency_scatterplot"),
+                                  div("This graph shows the relationship between the percentage of police living in the communites they patrol and the number of people police have killed in an average year.
+                                      We concluded there was no relationship between the two variables. 
+                                      However, it would be interesting to look into whether this effects other types of police misconduct.",
+                                      style=div_style))
                       )
              )
            )
@@ -85,7 +96,7 @@ ui <- navbarPage(
              ),
              mainPanel(leafletOutput("map_police_killings")))
       ),
-      tabPanel("Police Killings by Proportion of Race",
+      tabPanel("Police Killings by Communities' Proportion of Race",
         sidebarLayout(
           sidebarPanel(
             radioButtons(
@@ -133,7 +144,7 @@ ui <- navbarPage(
            div("For data on police killings:", 
                a(href='https://github.com/fivethirtyeight/data/tree/master/police-killings',"538 Github"),
                style=div_style),
-           div("etc")
+           div("etc", style=div_style)
   ),
   #make the background interesting
   setBackgroundColor(
