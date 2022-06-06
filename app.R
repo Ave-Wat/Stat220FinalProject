@@ -40,7 +40,7 @@ ui <- navbarPage(
   tabPanel("About", 
            HTML('<center><img src="download.png" width="400"></center>'),
            h3(),
-           p("This website hopes to show a precursory analysis of the relationships between police brutality, demographics, and police residence.")
+           div("This website hopes to show a precursory analysis of the relationships between police brutality, demographics, and police residence.", style=div_style)
   ),
   tabPanel("Police Residency", 
            tabsetPanel(
@@ -70,9 +70,36 @@ ui <- navbarPage(
              )
            )
   ),
-  tabPanel("Scatterplots",
-           sidebarLayout(sidebarPanel(),
-                         mainPanel())
+  tabPanel("Demographics and Police Brutality",
+    tabsetPanel(
+      tabPanel("Mapping Police Killings",
+           sidebarLayout(
+             sidebarPanel(
+               radioButtons("demographic_info",
+                            "Demographic Information",
+                            c("Median Household Income" = "income",
+                              "Hate Crimes" = "hatecrimes",
+                              "Share of Nonwhite State Residents" = "nonwhite_pop"))
+             ),
+             mainPanel(leafletOutput("map_police_killings")))
+      ),
+      tabPanel("Police Killings by Proportion of Race",
+        sidebarLayout(
+          sidebarPanel(
+            radioButtons(
+              "race3",
+              "Proportion of Race in a Given City",
+              c("Native American" = "race_prop_american_indian_and_alaska_native", 
+                "White" = "race_prop_white", 
+                "Black or African American" = "race_prop_black_or_african_american", 
+                "Hispanic" = "race_prop_hispanic_or_latino", 
+                "Asian" = "race_prop_asian")
+            )
+          ),
+          mainPanel(plotOutput(outputId = "killings_scatterplot"))
+        )
+      )
+    )
   ),
   tabPanel("Will Your City Have a Police Killing?",
            sidebarLayout(sidebarPanel(div(strong("Enter the police force size, the proportion of police that live
@@ -98,7 +125,13 @@ ui <- navbarPage(
                            plotOutput(outputId = 'var_imp_plot'))))
   ),
   tabPanel("Citations",
-           p("This website hopes to show a precursory analysis of the relationships between police brutality, demographics, and police residence.")
+           div("For data on police residency:", 
+               a(href='https://github.com/fivethirtyeight/data/tree/master/police-locals',"538 Github"),
+               style=div_style),
+           div("For data on police killings:", 
+               a(href='https://github.com/fivethirtyeight/data/tree/master/police-killings',"538 Github"),
+               style=div_style),
+           div("etc")
   ),
   #make the background interesting
   setBackgroundColor(
@@ -112,50 +145,81 @@ server <- function(input, output){
     select(joined_cities, input$race)
   })
   
-  output$residence_map <- renderLeaflet({
+
+  output$residence_map <- renderLeaflet({ 
+    residency <- NULL
     if(input$race == "all"){
-      leaflet(data=joined_cities) %>%
-        addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
-        addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
-        addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities$all, weight = 1, color = "#777777", 
-                   #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
-                   fillOpacity = 0.7, popup = ~paste(joined_cities$all)
-        )
+      residency <- joined_cities$all
     } else if (input$race == "white"){
-      leaflet(data=joined_cities) %>%
-        addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
-        addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
-        addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities$white, weight = 1, color = "#777777", 
-                   #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
-                   fillOpacity = 0.7, popup = ~paste(joined_cities$white)
-        )
+      residency <- joined_cities$white
     } else if (input$race == "non_white"){
-      leaflet(data=joined_cities) %>%
-        addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
-        addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
-        addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities$non_white, weight = 1, color = "#777777", 
-                   #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$non_white),
-                   fillOpacity = 0.7, popup = ~paste(joined_cities$non_white)
-        )
+      residency <- joined_cities$non_white
     } else if (input$race == "black"){
-      leaflet(data=joined_cities) %>%
-        addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
-        addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
-        addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities$black, weight = 1, color = "#777777", 
-                   #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
-                   fillOpacity = 0.7, popup = ~paste(joined_cities$black)
-        )
+      residency <- joined_cities$black
     } else if (input$race == "hispanic"){
-      leaflet(data=joined_cities) %>%
-        addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
-        addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
-        addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*joined_cities$hispanic, weight = 1, color = "#777777", 
-                   #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
-                   fillOpacity = 0.7, popup = ~paste(joined_cities$hispanic)
-        )
+      residency <- joined_cities$hispanic
+    } else {
+      residency <- joined_cities$all
+    }
+    
+    leaflet(data=joined_cities) %>%
+      addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
+      addPolygons(data = map("state", fill = TRUE, plot = FALSE), fillColor = topo.colors(10, alpha = NULL), stroke = FALSE) %>%
+      addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*residency, weight = 1, color = "#777777", 
+                 #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
+                 fillOpacity = 0.7, popup = ~paste(residency)
+      )
+  })
+  
+  output$map_police_killings <- renderLeaflet({ 
+    bins <- NULL
+    fill_by <- NULL
+    palette <- NULL
+    legend <- NULL
+    if(input$demographic_info == "hatecrimes") {
+      fill_by <- hate_crimes$avg_hatecrimes_per_100k_fbi
+      bins <- c(0, 2, 4, 6, 8, 10, 12)
+      palette <- "YlOrRd"
+      legend <- "# hatecrimes per 100k"
+    } else if (input$demographic_info == "income") {
+      fill_by <- hate_crimes$median_household_income
+      bins <- c(80000, 70000, 60000, 50000, 40000, 30000)
+      palette <- "Blues"
+      legend <- "Median Household Income"
+    } else if (input$demographic_info == "nonwhite_pop") {
+      fill_by <- hate_crimes$share_non_white
+      bins <- c(0, .2, .4, .6, .8, 1)
+      palette <- "Blues"
+      legend <- "Share of Non-White Pop"
     } else {
       
     }
+    pal <- colorBin(palette, domain = fill_by, bins = bins)
+    leaflet(data=joined_cities) %>%
+      addTiles(data = map("state", fill = TRUE, plot = FALSE)) %>%
+      addPolygons(data = map("state", fill = TRUE, plot = FALSE), 
+                  fillColor = ~pal(fill_by), 
+                  stroke = FALSE, 
+                  weight = 2,
+                  opacity = 1,
+                  color = "white",
+                  dashArray = "3",
+                  fillOpacity = 0.7,) %>%
+      addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~30000*joined_cities$killings, weight = 1, color = "#777777", 
+                 #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
+                 fillOpacity = 0.7, popup = ~paste(joined_cities$killings)) %>%
+      addLegend(pal = pal, values = ~hate_crimes$avg_hatecrimes_per_100k_fbi, opacity = 0.7, title = legend,
+                position = "bottomright") %>%
+      addControl("<h2 style='padding:0px;margin:0px'>Police Killings</h2>", position="bottomleft")
+  })
+  
+  output$killings_scatterplot <- renderPlot({
+    ggplot(joined_cities, aes_string(x=input$race3, y="killings", label="city")) +
+      geom_point() +
+      geom_label_repel(box.padding   = 0.35, 
+                       point.padding = 0.5,
+                       segment.color = 'grey50') +
+      geom_smooth(method='lm')
   })
   
   output$residency_scatterplot <- renderPlot({
