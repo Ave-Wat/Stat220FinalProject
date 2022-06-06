@@ -46,7 +46,8 @@ ui <- navbarPage(
                             c("All Races" = "all", "White" = "white", "Non-White" = "non_white", "Black" = "black", "Hispanic" = "hispanic")
                             )
                         ),
-                        mainPanel(leafletOutput("residence_map"))
+                        mainPanel(leafletOutput("residence_map"), 
+                                  div("", style=div_style))
                       )
              ),
              tabPanel("Residency and Police Killings",
@@ -122,7 +123,7 @@ ui <- navbarPage(
            div("For data on police killings:", 
                a(href='https://github.com/fivethirtyeight/data/tree/master/police-killings',"538 Github"),
                style=div_style),
-           div("etc")
+           div("etc", style=div_style)
   ),
   #make the background interesting
   setBackgroundColor(
