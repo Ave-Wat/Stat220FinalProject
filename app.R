@@ -16,6 +16,7 @@ library(caret)
 
 #load data
 joined_cities <- read_csv('data/joined_cities.csv')
+hate_crimes <- read_csv('data/hate_crimes.csv')
 
 #fit preliminary rf model with all variables
 set.seed(220)

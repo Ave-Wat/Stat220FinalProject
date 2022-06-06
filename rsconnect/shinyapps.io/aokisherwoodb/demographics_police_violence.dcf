@@ -5,10 +5,10 @@ account: aokisherwoodb
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6436541
-bundleId: 5980438
+bundleId: 5980654
 url: https://aokisherwoodb.shinyapps.io/demographics_police_violence/
-when: 1654486504.87831
-lastSyncTime: 1654486504.87832
+when: 1654489179.866
+lastSyncTime: 1654489179.86601
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: data_preprocessing.R|README.md
