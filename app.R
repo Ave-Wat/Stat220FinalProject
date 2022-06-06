@@ -47,8 +47,13 @@ ui <- navbarPage(
                         mainPanel(leafletOutput("residence_map"))
                       )
              ),
-             tabPanel("",
-                      h2("hi")
+             tabPanel("Residency and Police Killings",
+                      sidebarLayout(
+                        sidebarPanel(
+                          
+                        ),
+                        mainPanel(plotOutput(outputId = "residency_scatterplot"))
+                      )
              )
            )
   ),
@@ -102,14 +107,16 @@ server <- function(input, output){
   
   observe({
     leafletProxy("residence_map", data = filteredData()) %>%
-      addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*filteredData(), weight = 1, color = "#777777", 
+      addCircles(lng=joined_cities$lon, lat=joined_cities$lat, radius = ~150000*filteredData, weight = 1, color = "#777777", 
                  #fillColor = ~colorNumeric(brewer.pal.info["Blues",], joined_cities$all),
-                 fillOpacity = 0.7, popup = ~paste(filteredData())
+                 fillOpacity = 0.7, popup = ~paste(filteredData)
       )
   })
   
-  
-  
+  output$residency_scatterplot <- renderPlot({
+    ggplot(data=joined_cities, aes(x=all, y=killings_by_city))
+  })
+
   output$class <- renderText({
     ifelse('yes' == 'yes', 'We predict that your city has had a police killing.', 'We predict that your city has not had a police killing.')
   })
