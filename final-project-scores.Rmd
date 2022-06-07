@@ -1,0 +1,81 @@
+# final-project
+
+## Grading: out of 68 points
+## Score: 
+
+
+#### Stat content: (0-8 scale)
+
+- Graphics:
+- Tables/Stats:
+- Methods: 
+
+
+#### Communication: (0-8 scale)
+
+- Data:
+- Takeaways: 
+
+
+#### Website: (0-4 scale)
+
+- Layout:
+
+
+#### Scope/Creativitiy: (0-4 scale)
+
+- Scope:
+- Creativity: 
+
+
+#### Technical (0-4 scale)
+
+- coding style:
+- coding strategy:
+- access: 
+- report: 
+
+
+---------------------------------------
+
+
+**Statistical content** (8 point scale)
+
+Topic| Excellent: 8 | Satisfactory: 4 | Inadequate: 0 |
+|----| ------ |-------| -----|
+| **Graphics** | Graph(s) carefully tuned for desired purpose. One graph illustrates one point. Table(s) carefully constructed to make it easy to perform important comparisons. Careful styling highlights important features. | Graph(s) well chosen, but with a few minor problems: inappropriate aspect ratios, poor labels. Table(s) generally appropriate but possibly some minor formatting deficiencies. | Graph(s) poorly chosen to support questions. Table(s) with too many, or inconsistent, decimal places. Table(s) not appropriate for questions and findings. Major display problems. |
+|**Tables/Stats** | Table(s)/Stats provided and carefully constructed to make it easy to perform important comparisons. Careful styling highlights important features. |  Table(s)/Stats  generally appropriate but possibly some minor formatting deficiencies. | Table(s)/Stats  with too many, or inconsistent, decimal places. Table(s) not appropriate for questions and findings. Major display problems. |
+|**Methods** | Appropriate methods used (e.g. wrangling, modeling, etc) |  Methods used are mostly well chosen, but contain some minor problems. | Methods used are inappropriate |
+
+**Communication** (8 point scale)
+
+Topic| Excellent: 8 | Satisfactory: 4 | Inadequate: 0 |
+|----| ------ |-------| -----|
+| **Data**     | Website contains enough written information to clearly and engagingly describe the data, data sources, and why it is of interest.  | Data are explained but certain aspects lack clarity. | Data are not completely or correctly explained.|
+| **Takeaways**     | Website contains enough written information to clearly and engagingly describe the major takeaways that the viewer should be able to gain from results presented.  | Results are explained but certain aspects lack clarity. | Results are not completely or correctly explained.|
+
+
+**Website** (4 point scale)
+
+Topic| Excellent: 4 | Satisfactory: 2 | Inadequate: 0 |
+|----| ------ |-------| -----|
+| **Layout** | Website is visually appealing, engaging and easy to navigate.  | Website works but is not particularly engaging or  visually appealing.  | Website does not function or has major navigating issues.|
+
+
+**Scope and creativity** (4 point scale)
+
+Topic| Excellent: 4 | Satisfactory: 2 | Inadequate: 0 |
+|----| ------ |-------| -----|
+|**Scope** Achievement, mastery |Group has gone beyond what was expected and required in terms of scope, e.g., extraordinary effort, additional tools not addressed by this course.| Tools and techniques from the course are applied very competently. Chosen task was acceptable, but fairly conservative in ambition.|Group does not display the expected level of mastery of the tools and techniques in this course. Chosen task was too limited in scope.|
+|**Creativity** Cleverness, creativity| Group has gone beyond what was expected and required in terms of creativity, e.g. unusually sophisticated and creative use of tools from course.| Tools and techniques from the course are applied somewhat creatively. | Group does not display any creative use of the tools and techniques in this course. |
+
+
+
+**Technical aspects** (4 point scale)
+
+Topic| Excellent: 4 | Satisfactory: 2 | Inadequate: 0 |
+|----| ------ |-------| -----|
+|Coding **style**| Coding style is followed (e.g. avoids run on "sentences" of code), code is well commented | Coding style lacks refinement and has some errors, but code is readable and has some comments | Many errors in coding style, little attention paid to making the code human readable|
+|Coding **strategy**| Complicated problem broken down into sub-problems that are individually much simpler. Code is efficient, correct, and minimal. Code checks for common errors  | Code is correct, but could be edited down to simplier code chunks. Some checks for errors. |   Code tackles complicated problem in one big chunk. Code is repetitive and could easily be functionalized. No anticipation of errors. |
+|Ease of **access**, compliance with course conventions for submitted work|Access as easy as possible, code runs! | Satisfactory | Not an earnest effort to reduce friction and comply with conventions  and/or code does not run|
+| Technical **report**     | Report is complete, contains all major steps  | Methods are explained but certain aspects lack clarity. | Methods are not explained.|
