@@ -1,39 +1,47 @@
 # final-project
 
 ## Grading: out of 68 points
-## Score: 
+## Score: 57 (A range)
 
 
-#### Stat content: (0-8 scale)
+#### Stat content: (0-8 scale): 18
 
-- Graphics:
-- Tables/Stats:
-- Methods: 
+- Graphics: 6
+  - map popups: include a label and round your number (it takes a little html work but it can be done by copying examples shown on the leaflet help page)
+  - edit the axes labels and titles on your graphs to make them more informative
+  
+- Tables/Stats: 6
+  - a stat like number of killings in a community should be standardized so city size isn't a confounding variable
 
-
-#### Communication: (0-8 scale)
-
-- Data:
-- Takeaways: 
-
-
-#### Website: (0-4 scale)
-
-- Layout:
+- Methods: 6
+  - prediction: explain more about the variables used, why include the 3 variables for prediction and not include others? (e.g. police force prop is low in importance, so why included it as a factor?)
 
 
-#### Scope/Creativitiy: (0-4 scale)
+#### Communication: (0-8 scale): 12
 
-- Scope:
-- Creativity: 
+- Data: 6
+  - more about your variables would be useful, e.g how are hate crimes determined?
+  
+- Takeaways: 6
 
 
-#### Technical (0-4 scale)
+#### Website: (0-4 scale): 4
 
-- coding style:
-- coding strategy:
-- access: 
-- report: 
+- Layout: 4
+
+
+#### Scope/Creativitiy: (0-4 scale): 7
+
+- Scope:  4
+- Creativity:  3
+
+
+#### Technical (0-4 scale): 16
+
+- coding style: 4
+- coding strategy: 4
+- access: 4
+- report: 4
 
 
 ---------------------------------------
